@@ -15,6 +15,7 @@ const VoiceWidget = ({
   const [selectedLanguage, setSelectedLanguage] = useState('ru'); // Default to Russian
   const [assistant, setAssistant] = useState(null);
   const [error, setError] = useState(null);
+  const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
 
   const translations = useRef({
     'en': {
@@ -48,6 +49,17 @@ const VoiceWidget = ({
 
   const getTranslation = (key) => {
     return translations.current[selectedLanguage][key] || translations.current['en'][key];
+  };
+
+  const handleLanguageButtonClick = (e) => {
+    e.stopPropagation();
+    setIsLanguageDropdownOpen(!isLanguageDropdownOpen);
+  };
+
+  const handleLanguageSelect = (langCode) => {
+    setSelectedLanguage(langCode);
+    setIsLanguageDropdownOpen(false);
+    updateButtonState(currentState);
   };
 
   const updateButtonState = (state) => {
@@ -183,25 +195,13 @@ const VoiceWidget = ({
     }
   })();
 
-      // Attach event listeners for language dropdown
-      const handleLanguageButtonClick = (e) => {
-        e.stopPropagation();
-        if (languageDropdownRef.current) {
-          languageDropdownRef.current.style.display = languageDropdownRef.current.style.display === 'flex' ? 'none' : 'flex';
-        }
-      };
-
+      // Handle click outside to close dropdown
       const handleClickOutside = (e) => {
         if (widgetElRef.current && !widgetElRef.current.contains(e.target)) {
-          if (languageDropdownRef.current) {
-            languageDropdownRef.current.style.display = 'none';
-          }
+          setIsLanguageDropdownOpen(false);
         }
       };
-
-      if (languageButtonRef.current) {
-        languageButtonRef.current.addEventListener('click', handleLanguageButtonClick);
-      }
+      
       document.addEventListener('click', handleClickOutside);
 
       // Metallic button hover effects
@@ -214,9 +214,6 @@ const VoiceWidget = ({
 
       return () => {
         assistantRef.current?.disconnect();
-        if (languageButtonRef.current) {
-          languageButtonRef.current.removeEventListener('click', handleLanguageButtonClick);
-        }
         document.removeEventListener('click', handleClickOutside);
         if (metallicButtonRef.current) {
           metallicButtonRef.current.removeEventListener('mouseenter', handleMouseEnter);
@@ -313,24 +310,22 @@ const VoiceWidget = ({
         <button 
           ref={languageButtonRef}
           className="language-button"
+          onClick={handleLanguageButtonClick}
         >
           {languages.find(lang => lang.code === selectedLanguage)?.flag || '🇷🇺'} ▼
         </button>
       </div>
-      <div ref={languageDropdownRef} className="language-dropdown">
+      <div 
+        ref={languageDropdownRef} 
+        className="language-dropdown"
+        style={{ display: isLanguageDropdownOpen ? 'flex' : 'none' }}
+      >
         {languages.map(lang => (
           <div 
             key={lang.code} 
             className="language-option"
             onClick={() => {
-              setSelectedLanguage(lang.code);
-              if (languageButtonRef.current) {
-                languageButtonRef.current.innerHTML = `${lang.flag} ▼`;
-              }
-              if (languageDropdownRef.current) {
-                languageDropdownRef.current.style.display = 'none';
-              }
-              updateButtonState(currentState);
+              handleLanguageSelect(lang.code);
               console.log('Language selected:', lang.name, lang.code);
             }}
           >

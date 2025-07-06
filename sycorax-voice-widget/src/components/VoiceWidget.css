@@ -14,11 +14,12 @@
 }
 
 .simple-widget.bottom-right-offset {
-  bottom: 20px;
-  right: 100px; /* 80px offset from right edge to avoid Chatwoot */
+  bottom: 80px;
+  right: 420px;
 }
 
 .voice-widget-container {
+  position: relative;
   display: flex;
   align-items: center;
   background-color: white;

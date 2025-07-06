@@ -12,7 +12,8 @@ export default defineConfig({
     rollupOptions: {
       external: [],
       output: {
-        globals: {}
+        globals: {},
+        entryFileNames: 'sycorax-sdk.js'
       }
     },
     outDir: 'dist-sdk',
