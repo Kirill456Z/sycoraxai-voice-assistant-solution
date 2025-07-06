@@ -131,23 +131,23 @@ python3 src/main.py
 2. **Load the SDK** before your closing `</body>` tag:
 
    ```html
-<script>
-      (function(d,t) {
-          var BASE_URL= "https://cdn.jsdelivr.net/npm/sycorax-voice-widget@latest/dist-sdk"
-          var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-          g.src= BASE_URL + '/sycorax-sdk.js';
-          g.defer = true; 
-          g.async = true;
-          s.parentNode.insertBefore(g,s);
-          g.onload=function(){
-              window.sycoraxSDK.run({
-              companyId: 'abc123',
-              baseUrl: 'http://localhost:8001' // or a production server url
-              })
-          }
-      })(document,"script");
-</script>
-```
+    <script>
+        (function(d,t) {
+            var BASE_URL= "https://cdn.jsdelivr.net/npm/sycorax-voice-widget@latest/dist-sdk"
+            var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+            g.src= BASE_URL + '/sycorax-sdk.js';
+            g.defer = true; 
+            g.async = true;
+            s.parentNode.insertBefore(g,s);
+            g.onload=function(){
+                window.sycoraxSDK.run({
+                companyId: 'abc123',
+                baseUrl: 'http://localhost:8001' // or a production server url
+                })
+            }
+        })(document,"script");
+    </script>
+    ```
 
 3. **Initialization Options**
 
