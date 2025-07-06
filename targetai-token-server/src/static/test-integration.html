@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TargetAI Integration Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .status.idle {
+            background-color: #e9ecef;
+            color: #495057;
+        }
+        .status.connecting {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .status.connected {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status.speaking {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+        .status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .log {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .input-group {
+            margin: 15px 0;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 TargetAI Integration Test</h1>
+        
+        <div class="warning">
+            <strong>Note:</strong> This is a test page that demonstrates the integration between the sycoraxai-voice-assistants NPM package and the TargetAI token server. In a real application, you would install the NPM package and import it properly.
+        </div>
+
+        <div class="input-group">
+            <label for="user-id">User ID:</label>
+            <input type="text" id="user-id" value="test_user_integration" placeholder="Enter user ID">
+        </div>
+
+        <div class="input-group">
+            <label for="token-server-url">Token Server URL:</label>
+            <input type="text" id="token-server-url" value="http://localhost:5000" placeholder="Token server URL">
+        </div>
+
+        <div class="status idle" id="status">Status: Idle</div>
+
+        <div>
+            <button onclick="initializeAssistant()">Initialize Assistant</button>
+            <button onclick="connectToTargetAI()" id="connect-btn" disabled>Connect to TargetAI</button>
+            <button onclick="disconnect()" id="disconnect-btn" disabled>Disconnect</button>
+            <button onclick="clearLog()">Clear Log</button>
+        </div>
+
+        <div class="log" id="log">
+            <div>Integration test ready. Click "Initialize Assistant" to begin.</div>
+        </div>
+
+        <div style="margin-top: 30px;">
+            <h3>Integration Flow:</h3>
+            <ol>
+                <li>Initialize the voice assistant (simulated)</li>
+                <li>Get token from the universal token server</li>
+                <li>Connect to TargetAI using the token</li>
+                <li>Test voice interaction capabilities</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        let assistant = null;
+        let isConnected = false;
+        let currentStatus = 'idle';
+
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function updateStatus(status, message) {
+            currentStatus = status;
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status ${status}`;
+            statusDiv.textContent = `Status: ${message}`;
+            log(`Status changed to: ${message}`);
+        }
+
+        function updateButtons() {
+            const connectBtn = document.getElementById('connect-btn');
+            const disconnectBtn = document.getElementById('disconnect-btn');
+            
+            connectBtn.disabled = !assistant || isConnected;
+            disconnectBtn.disabled = !assistant || !isConnected;
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '<div>Log cleared.</div>';
+        }
+
+        async function initializeAssistant() {
+            try {
+                log('Initializing TargetAI voice assistant...');
+                
+                // Simulate the NPM package initialization
+                // In a real app: import { createVoiceAssistant } from 'sycoraxai-voice-assistants';
+                assistant = {
+                    // Simulated assistant object
+                    connect: async (connectionDetails) => {
+                        log('Simulated connect called with details: ' + JSON.stringify(connectionDetails, null, 2));
+                        // In real implementation, this would call the actual TargetAI SDK
+                        return new Promise((resolve) => {
+                            setTimeout(() => {
+                                isConnected = true;
+                                updateStatus('connected', 'Connected to TargetAI');
+                                updateButtons();
+                                resolve();
+                            }, 2000);
+                        });
+                    },
+                    disconnect: () => {
+                        log('Simulated disconnect called');
+                        isConnected = false;
+                        updateStatus('idle', 'Disconnected');
+                        updateButtons();
+                    },
+                    isCallActive: false,
+                    agentStatus: 'idle'
+                };
+
+                log('✅ Assistant initialized successfully');
+                updateStatus('idle', 'Assistant Ready');
+                updateButtons();
+                
+            } catch (error) {
+                log('❌ Failed to initialize assistant: ' + error.message);
+                updateStatus('error', 'Initialization Failed');
+            }
+        }
+
+        async function connectToTargetAI() {
+            if (!assistant) {
+                log('❌ Assistant not initialized');
+                return;
+            }
+
+            try {
+                updateStatus('connecting', 'Getting token...');
+                
+                const userId = document.getElementById('user-id').value;
+                const tokenServerUrl = document.getElementById('token-server-url').value;
+                
+                log('Requesting token from server...');
+                
+                // Get token from our universal token server
+                const tokenResponse = await fetch(`${tokenServerUrl}/api/token`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        provider: 'targetai',
+                        user_id: userId
+                    })
+                });
+
+                if (!tokenResponse.ok) {
+                    throw new Error(`Token request failed: ${tokenResponse.status}`);
+                }
+
+                const tokenData = await tokenResponse.json();
+                log('✅ Token received: ' + tokenData.token.substring(0, 50) + '...');
+
+                // Prepare connection details for TargetAI
+                const connectionDetails = {
+                    serverUrl: tokenData.server_url,
+                    tokenServerUrl: tokenServerUrl,
+                    provider: 'targetai',
+                    agentUuid: tokenData.agent_uuid,
+                    allowedResponses: ['text', 'voice'],
+                    sampleRate: 24000,
+                    emitRawAudioSamples: false,
+                    dataInput: { 
+                        userId: tokenData.user_id,
+                        context: 'integration_test'
+                    },
+                    messages: [
+                        { type: 'system', content: 'You are a helpful assistant for integration testing' }
+                    ]
+                };
+
+                log('Connecting to TargetAI with connection details...');
+                updateStatus('connecting', 'Connecting to TargetAI...');
+
+                // Connect using the assistant (simulated)
+                await assistant.connect(connectionDetails);
+                
+                log('🎉 Successfully connected to TargetAI!');
+                log('Ready for voice interaction...');
+                
+            } catch (error) {
+                log('❌ Connection failed: ' + error.message);
+                updateStatus('error', 'Connection Failed');
+                updateButtons();
+            }
+        }
+
+        function disconnect() {
+            if (assistant && isConnected) {
+                log('Disconnecting from TargetAI...');
+                assistant.disconnect();
+                log('✅ Disconnected successfully');
+            }
+        }
+
+        // Initialize the page
+        updateButtons();
+    </script>
+</body>
+</html>
+

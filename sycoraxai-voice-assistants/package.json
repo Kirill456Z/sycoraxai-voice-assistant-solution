@@ -1,0 +1,59 @@
+{
+  "name": "sycoraxai-voice-assistants",
+  "version": "1.2.5",
+  "description": "A voice assistant package for React applications supporting multiple providers including LiveKit, Retell, and TargetAI",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "sycoraxai",
+    "voice",
+    "assistant",
+    "react",
+    "livekit",
+    "retell",
+    "targetai",
+    "openai",
+    "azure",
+    "typescript",
+    "voice-ai",
+    "realtime"
+  ],
+  "author": "Kirill Zemlianskii Kirill456Z@yandex.ru",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aiwingg/sycoraxai-voice-assistants.git"
+  },
+  "homepage": "https://github.com/aiwingg/sycoraxai-voice-assistants#readme",
+  "bugs": {
+    "url": "https://github.com/aiwingg/sycoraxai-voice-assistants/issues"
+  },
+  "peerDependencies": {
+    "@livekit/components-react": "^2.9.3",
+    "livekit-client": "^2.8.0",
+    "retell-client-js-sdk": "^2.0.7",
+    "targetai-client-js-sdk": "^1.0.5",
+    "react": "^18.3.1"
+  },
+  "devDependencies": {
+    "@livekit/components-react": "^2.9.3",
+    "@types/node": "^20.17.13",
+    "@types/react": "^19.1.6",
+    "@types/react-dom": "^19.1.5",
+    "framer-motion": "^12.14.0",
+    "livekit-client": "^2.8.0",
+    "retell-client-js-sdk": "^2.0.7",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "targetai-client-js-sdk": "^1.0.5"
+  }
+}

@@ -1,0 +1,59 @@
+# --- General OS files ---
+.DS_Store
+Thumbs.db
+
+# --- IDE / Editor directories ---
+.idea/
+.vscode/
+.history/
+
+# --- Node.js projects ---
+node_modules/
+# Build outputs
+/dist/
+/dist-sdk/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Production bundles & tarballs
+*.tgz
+
+# --- TypeScript / Vite build artifacts ---
+*.d.ts
+*.js.map
+*.js.bundle
+
+# --- Python projects ---
+venv/
+__pycache__/
+*.py[cod]
+*.so
+
+# SQLite / other local DBs
+*.sqlite
+*.db
+src/database/*.db
+
+# --- Environment & config files ---
+.env
+.env.*
+
+# --- PDF & temporary docs generated outputs (commit Markdown, skip heavy binaries) ---
+*.pdf
+
+# --- Ignore nested Git repos to prevent accidental submodules ---
+sycorax-voice-widget/.git/
+sycoraxai-voice-assistants/.git/
+targetai-token-server/.git/
+
+# --- Build output folders in subprojects (keep source, ignore built) ---
+sycorax-voice-widget/dist/
+sycorax-voice-widget/dist-sdk/
+sycoraxai-voice-assistants/dist/
+
+# --- Misc ---
+*.swp
+*~ 
