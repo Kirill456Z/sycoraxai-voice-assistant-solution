@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { createVoiceAssistant } from 'sycoraxai-voice-assistants';
 import './VoiceWidget.css';
 
-const VoiceWidget = ({
+const VoiceWidget = ({ 
   config = {},
   onStatusChange = () => {},
   onError = () => {},
@@ -54,11 +54,6 @@ const VoiceWidget = ({
     return translations.current[selectedLanguage][key] || translations.current['en'][key];
   };
 
-  // Initialize button text on mount
-  useEffect(() => {
-    setButtonText(getTranslation('voiceChat'));
-  }, []);
-
   const handleLanguageButtonClick = (e) => {
     e.stopPropagation();
     setIsLanguageDropdownOpen(!isLanguageDropdownOpen);
@@ -67,16 +62,7 @@ const VoiceWidget = ({
   const handleLanguageSelect = (langCode) => {
     setSelectedLanguage(langCode);
     setIsLanguageDropdownOpen(false);
-
-    // End active call when language changes
-    if (isCallActive && assistantRef.current) {
-      assistantRef.current.disconnect();
-      setIsCallActive(false);
-      setError(null);
-    }
-
-    // Reset button state to idle when language changes
-    updateButtonState('idle');
+    updateButtonState(currentState);
   };
 
   const updateButtonState = (state) => {
@@ -141,13 +127,16 @@ const VoiceWidget = ({
     if (!initialized) {
       setInitialized(true);
       
+      // Set initial button state
+      updateButtonState('idle');
+      
       // Handle click outside to close dropdown
       const handleClickOutside = (e) => {
         if (widgetElRef.current && !widgetElRef.current.contains(e.target)) {
           setIsLanguageDropdownOpen(false);
         }
       };
-
+      
       document.addEventListener('click', handleClickOutside);
 
       // Metallic button hover effects
@@ -169,10 +158,12 @@ const VoiceWidget = ({
     }
   }, [initialized]);
 
-  // Initialize button text and update when language changes
+  // Update button text when language changes
   useEffect(() => {
-    updateButtonState(currentState);
-  }, [selectedLanguage, currentState]);
+    if (initialized) {
+      updateButtonState(currentState);
+    }
+  }, [selectedLanguage, initialized]);
 
   const requestMicrophonePermissionAndStartCall = async () => {
     try {
@@ -303,69 +294,6 @@ const VoiceWidget = ({
     }
   };
 
-      // Fetch fresh connection details with current language
-      // This is now the only place where connection details are fetched
-      const connectionDetailsResponse = await fetch(`${config.tokenServerUrl}/connectionDetails`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          company_id: config.companyId,
-          language: selectedLanguage
-        })
-      });
-
-      if (!connectionDetailsResponse.ok) {
-        throw new Error(`Token request failed: ${connectionDetailsResponse.status}`);
-      }
-
-      const connectionDetails = await connectionDetailsResponse.json();
-
-      // Process connection details based on provider
-      let processedConnectionDetails;
-
-      if (connectionDetails.provider === 'targetai') {
-        processedConnectionDetails = {
-          tokenPayload: config.tokenPayload || {},
-          serverUrl: connectionDetails.server_url,
-          tokenServerUrl: config.tokenServerUrl,
-          provider: 'targetai',
-          agentUuid: connectionDetails.agent_uuid,
-          allowedResponses: ['voice'],
-          sampleRate: 24000,
-          emitRawAudioSamples: true,
-          dataInput: {
-            ...config.dataInput
-          },
-          messages: connectionDetails.messages
-        };
-      } else if (connectionDetails.provider === 'retell') {
-        processedConnectionDetails = {
-          access_token: connectionDetails.access_token,
-          agentId: connectionDetails.agent_id,
-          provider: 'retell'
-        };
-      } else if (connectionDetails.provider === 'livekit') {
-        processedConnectionDetails = {
-          participantToken: connectionDetails.participant_token,
-          serverUrl: connectionDetails.server_url,
-          roomName: connectionDetails.room_name,
-          participantName: connectionDetails.participant_name,
-          provider: 'livekit'
-        };
-      }
-
-      console.log('connectionDetails', processedConnectionDetails);
-      await assistantRef.current.connect(processedConnectionDetails);
-    } catch (err) {
-      console.error('Call initiation failed:', err);
-      setError(err.message || 'Failed to start call');
-      setIsCallActive(false);
-      updateButtonState('error');
-    }
-  }
-};
   const languages = [
     {code: 'en', name: 'ENGLISH', flag: '🇺🇸'},
     {code: 'es', name: 'SPANISH', flag: '🇪🇸'},
@@ -375,14 +303,14 @@ const VoiceWidget = ({
   return (
     <div ref={widgetElRef} className={`simple-widget ${className}`}>
       <div className="voice-widget-container">
-        <div
+        <div 
           ref={metallicButtonRef}
           className="metallic-button"
           onClick={isCallActive ? () => {} : requestMicrophonePermissionAndStartCall} // Only request mic if not active
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="#666"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
         </div>
-        <button
+        <button 
           ref={actionButtonRef}
           className="voice-action-button"
           onClick={startOrRestartCall}
@@ -390,7 +318,7 @@ const VoiceWidget = ({
         >
           {buttonIcon} {buttonText}
         </button>
-        <button
+        <button 
           ref={languageButtonRef}
           className="language-button"
           onClick={handleLanguageButtonClick}
@@ -398,14 +326,14 @@ const VoiceWidget = ({
           {languages.find(lang => lang.code === selectedLanguage)?.flag || '🇷🇺'} ▼
         </button>
       </div>
-      <div
-        ref={languageDropdownRef}
+      <div 
+        ref={languageDropdownRef} 
         className="language-dropdown"
         style={{ display: isLanguageDropdownOpen ? 'flex' : 'none' }}
       >
         {languages.map(lang => (
-          <div
-            key={lang.code}
+          <div 
+            key={lang.code} 
             className="language-option"
             onClick={() => {
               handleLanguageSelect(lang.code);
@@ -423,3 +351,5 @@ const VoiceWidget = ({
 };
 
 export default VoiceWidget;
+
+
