@@ -1,0 +1,28 @@
+{
+    "targetai": {
+        "tos_base_url": "https://app.targetai.ai",
+        "api_key": "sk_PL3oEjtB97GDwi3o3fEVS0VF7sRHGnyu",
+        "agent_uuid": "3af19e89-3253-4a8d-a1e3-cd3872291e4a",
+        "allowedResponses": ["voice"],
+        "emitRawAudioSamples": true,
+        "messages": [
+            {
+                "role": "user",
+                "content": "You are a helpful voice assistant."
+            }
+        ],
+        "dataInput": {
+            "name": "John Doe",
+            "language": "ru"
+        }
+    },
+    "retell": {
+        "api_key": "key_3ac0bb77521c7602b840730a6b00",
+        "agent_id": "agent_e04f3277286469fd520838468a"
+    },
+    "livekit": {
+        "api_key": "YOUR_LIVEKIT_API_KEY_HERE",
+        "api_secret": "YOUR_LIVEKIT_API_SECRET_HERE",
+        "server_url": "wss://your-livekit-server.com"
+    }
+} 

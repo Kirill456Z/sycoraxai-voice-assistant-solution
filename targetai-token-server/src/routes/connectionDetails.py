@@ -3,8 +3,30 @@ from targetai import TargetAITokenClient
 from retell import Retell
 import time
 from datetime import datetime, timedelta
+import json
 
 connectionDetails_bp = Blueprint('connectionDetails', __name__)
+
+# Define the path for the configuration JSON file
+CONFIG_FILE_PATH = 'config/providers_config.json'
+
+# Function to read the configuration from the JSON file
+def read_config_from_file():
+    try:
+        with open(CONFIG_FILE_PATH, 'r') as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return {}
+    except json.JSONDecodeError:
+        return {}
+
+# Function to write the configuration to the JSON file
+def write_config_to_file(config):
+    try:
+        with open(CONFIG_FILE_PATH, 'w') as file:
+            json.dump(config, file, indent=4)
+    except Exception as e:
+        print(f"Error writing config to file: {e}")
 
 # Configuration for all providers
 PROVIDERS_CONFIG = {
@@ -53,6 +75,9 @@ def get_token():
         data = request.get_json() or {}
         provider = data.get('provider', 'retell').lower()
         company_id = data.get('company_id', f'comapny_{int(time.time())}')
+        
+        # Read the configuration from the JSON file
+        PROVIDERS_CONFIG = read_config_from_file()
         
         if provider not in PROVIDERS_CONFIG:
             return jsonify({
@@ -148,4 +173,29 @@ def handle_livekit_token(data, user_id):
         'expires_in': 3600,
         'note': 'This is a placeholder implementation. Configure LiveKit credentials to use.'
     })
+
+# Add a new route to read the current configuration
+@connectionDetails_bp.route('/read_config', methods=['GET'])
+def read_config():
+    try:
+        config = read_config_from_file()
+        return jsonify(config)
+    except Exception as e:
+        return jsonify({
+            'error': 'Failed to read config',
+            'message': str(e)
+        }), 500
+
+# Add a new route to store a new configuration
+@connectionDetails_bp.route('/store_config', methods=['POST'])
+def store_config():
+    try:
+        new_config = request.get_json() or {}
+        write_config_to_file(new_config)
+        return jsonify({'message': 'Config updated successfully'}), 200
+    except Exception as e:
+        return jsonify({
+            'error': 'Failed to store config',
+            'message': str(e)
+        }), 500
 
